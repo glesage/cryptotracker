@@ -10,7 +10,9 @@ node app.js
 
 #### Environment variables
 ```
-export DB_ID="" // ID of the DB
+export DB_ID="" // ID of the Google project
+export DB_NAME="" // Name of the DB
+export DB_TABLE="" // Name of the table
 export DB_CREDS="" // Credentials for db access
 
 export BIT_WS_KEY="" // Bitfinex API KEY for websocket connection
