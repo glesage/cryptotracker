@@ -1,4 +1,4 @@
-Utility app to record all trades from various exchanges
+Utility app to record all trades from various exchanges [ ![Codeship Status for glesage/cryptotracker](https://app.codeship.com/projects/56e29490-7d09-0135-5c44-361f0802280c/status?branch=master)](https://app.codeship.com/projects/245792)
 ================
 
 #### Installation
