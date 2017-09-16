@@ -1,0 +1,13 @@
+{
+    "name": "cryptotracker",
+    "version": "0.0.1",
+    "main": "app.js",
+    "dependencies":
+    {
+        "@google-cloud/bigquery": "0.9.6"
+    },
+    "scripts":
+    {
+        "test": "jshint --exclude ./node_modules ."
+    }
+}
