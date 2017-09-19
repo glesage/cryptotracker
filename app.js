@@ -6,7 +6,6 @@ const storage = new Storage(
 {
 	dbId: process.env.DB_ID,
 	dbName: process.env.DB_NAME,
-	tableName: process.env.DB_TABLE,
 	credentials: process.env.DB_CREDS
 });
 
@@ -14,5 +13,19 @@ Bitfinex(
 {
 	key: process.env.BIT_WS_KEY,
 	secret: process.env.BIT_WS_SECRET,
-	callback: storage.record
+	callback: storage.record,
+	currencies: [
+		'BTC',
+		'ETH',
+		'LTC',
+		'OMG',
+		'BCH',
+		'ETC',
+		'XMR',
+		'EOS',
+		'NEO',
+		'ZEC',
+		'XRP',
+		'SAN'
+	]
 });
