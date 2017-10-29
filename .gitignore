@@ -29,3 +29,4 @@ node_modules
 .trader_vars
 package-lock.json
 .cryptotracker_vars
+csv/
