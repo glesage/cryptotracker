@@ -20,18 +20,12 @@ fs.readdir(csvDir, function (err, filenames)
 		const exchange = fileDsc.split('_')[0];
 		const currency = fileDsc.split('_')[1];
 
-		let lines = [];
-
-		let open = 0;
-		let close = 0;
-		let low = 0;
-		let high = 0;
-		let weighted = 0;
-
 		const lineReader = rl.createInterface(
 		{
 			input: fs.createReadStream(csvDir + filename)
 		});
+
+		let lines = [];
 
 		lineReader.on('line', function (line)
 		{
@@ -50,15 +44,22 @@ fs.readdir(csvDir, function (err, filenames)
 
 		lineReader.on('close', function (line)
 		{
+			const volume = sum(lines, 'amount');
+			const open = lines[0].price;
+			const close = lines[lines.length - 1].price;
+			const high = max(lines, 'price');
+			const low = min(lines, 'price');
+			const weighted = sum(lines, 'priceTimesAmount') / volume;
+
 			console.log();
 			console.log(currency);
 			console.log('Trades: ' + lines.length);
-			console.log('Volume: ' + sum(lines, 'amount').toFixed(0) + ' ' + currency);
-			console.log('Open: ' + lines[0].price);
-			console.log('Close: ' + lines[lines.length - 1].price);
-			console.log('High: ' + max(lines, 'price'));
-			console.log('Low: ' + min(lines, 'price'));
-			console.log('Weighted average: ' + sum(lines, 'priceTimesAmount') / lines.length);
+			console.log('Volume: ' + volume + ' ' + currency);
+			console.log('Open: ' + open);
+			console.log('Close: ' + close);
+			console.log('High: ' + high);
+			console.log('Low: ' + low);
+			console.log('Weighted average: ' + weighted);
 		});
 
 		function sum(arr, property)
