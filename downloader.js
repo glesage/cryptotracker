@@ -25,37 +25,59 @@ const currencies = [
 	'SAN'
 ];
 
-const startDate = moment().startOf('month').format('x');
-const endDate = moment().startOf('month').add(2, 'weeks').format('x');
-const exchange = 'bitfinex';
-
-const startDateDesc = '10012017';
-const endDateDesc = '10142017';
-
-currencies.forEach(function (currency)
+var dates = [
 {
-	const fileName = './csv/bitfinex_' + currency + '_' + startDateDesc + '-' + endDateDesc + '.csv';
-	const curr = currency.toLowerCase() + 'usd';
+	startDate: moment('11/01/2017', 'MM/DD/YYYY').startOf('day').format('x'),
+	endDate: moment('11/30/2017', 'MM/DD/YYYY').endOf('day').format('x'),
+	startDateDesc: '11012017',
+	endDateDesc: '11302017'
+}];
 
-	fs.writeFile(fileName, 'Id,Currency,Timestamp,Price,Amount,Type', function (err)
+function downloadForCurrency(currency, date)
+{
+	console.log(currency);
+	console.log(date);
+
+	return new Promise(function (resolve, reject)
 	{
-		storage.download(exchange, curr, startDate, endDate).then(function (data)
-		{
-			let dataString = '';
-			data.forEach(function (d)
-			{
-				dataString += '\n' + d.ID;
-				dataString += ',' + d.CURRENCY;
-				dataString += ',' + d.TIMESTAMP;
-				dataString += ',' + d.PRICE;
-				dataString += ',' + d.AMOUNT;
-				dataString += ',' + d.TYPE;
-			});
+		const fileName = './csv/bitfinex_' + currency + '_' + date.startDateDesc + '-' + date.endDateDesc + '.csv';
+		const curr = currency.toLowerCase() + 'usd';
 
-			fs.appendFile(fileName, dataString, function (err)
+		fs.writeFile(fileName, 'Id,Currency,Timestamp,Price,Amount,Type', function (err)
+		{
+			storage.download('bitfinex', curr, date.startDate, date.endDate).then(function (data)
 			{
-				if (err) console.log(err);
+				let dataString = '';
+				data.forEach(function (d)
+				{
+					dataString += '\n' + d.ID;
+					dataString += ',' + d.CURRENCY;
+					dataString += ',' + d.TIMESTAMP;
+					dataString += ',' + d.PRICE;
+					dataString += ',' + d.AMOUNT;
+					dataString += ',' + d.TYPE;
+				});
+
+				fs.appendFile(fileName, dataString, function (err)
+				{
+					if (err) console.log(err);
+					resolve();
+				});
 			});
 		});
 	});
-});
+}
+
+currencies.reduce(function (prev, currency)
+{
+	return prev.then(function ()
+	{
+		return dates.reduce(function (subPrev, date)
+		{
+			return subPrev.then(function ()
+			{
+				return downloadForCurrency(currency, date);
+			});
+		}, Promise.resolve());
+	});
+}, Promise.resolve());
