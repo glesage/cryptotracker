@@ -14,6 +14,7 @@ const currencies = [
 	'BTC',
 	'ETH',
 	'LTC',
+
 	'OMG',
 	'BCH',
 	'ETC',
@@ -27,10 +28,10 @@ const currencies = [
 
 var dates = [
 {
-	startDate: moment('11/01/2017', 'MM/DD/YYYY').startOf('day').format('x'),
-	endDate: moment('11/30/2017', 'MM/DD/YYYY').endOf('day').format('x'),
-	startDateDesc: '11012017',
-	endDateDesc: '11302017'
+	startDate: moment('03/01/2018', 'MM/DD/YYYY').startOf('day').format('x'),
+	endDate: moment('03/31/2018', 'MM/DD/YYYY').endOf('day').format('x'),
+	startDateDesc: '03012018',
+	endDateDesc: '03312018'
 }];
 
 function downloadForCurrency(currency, date)
@@ -47,16 +48,26 @@ function downloadForCurrency(currency, date)
 		{
 			storage.download('bitfinex', curr, date.startDate, date.endDate).then(function (data)
 			{
-				let dataString = '';
-				data.forEach(function (d)
-				{
-					dataString += '\n' + d.ID;
-					dataString += ',' + d.CURRENCY;
-					dataString += ',' + d.TIMESTAMP;
-					dataString += ',' + d.PRICE;
-					dataString += ',' + d.AMOUNT;
-					dataString += ',' + d.TYPE;
-				});
+				writeToFile(fileName, data).then(resolve).catch(reject);
+			});
+		});
+	});
+}
+
+function writeToFile(fileName, data)
+{
+	return data.reduce(function (prev, curr)
+	{
+		return prev.then(function ()
+		{
+			return new Promise(function (resolve, reject)
+			{
+				var dataString = '\n' + curr.ID;
+				dataString += ',' + curr.CURRENCY;
+				dataString += ',' + curr.TIMESTAMP;
+				dataString += ',' + curr.PRICE;
+				dataString += ',' + curr.AMOUNT;
+				dataString += ',' + curr.TYPE;
 
 				fs.appendFile(fileName, dataString, function (err)
 				{
@@ -65,7 +76,7 @@ function downloadForCurrency(currency, date)
 				});
 			});
 		});
-	});
+	}, Promise.resolve());
 }
 
 currencies.reduce(function (prev, currency)
